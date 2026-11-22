@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>HydroShield | Hilly Region Flash Flood Prediction & Safe Point Navigator</title>
+  <meta name="description" content="AI-driven early warning and safe point evacuation decision-support system for flash floods in mountainous terrains.">
+  
+  <!-- Mobile & PWA Meta Tags -->
+  <meta name="theme-color" content="#070c18">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HydroShield">
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="icon" type="image/png" href="/static/app-icon.png">
+  <link rel="apple-touch-icon" href="/static/app-icon.png">
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div id="root">
+    <!-- Initial Loading Screen -->
+    <div style="display:flex; height:100vh; justify-content:center; align-items:center; background:#070b14; color:#94a3b8; font-family:'Inter',sans-serif;">
+      <div style="text-align:center;">
+        <div style="font-size:46px; margin-bottom:14px; animation:hydro-spin 2s ease infinite;">🌊</div>
+        <div style="font-size:22px; font-weight:800; color:#f8fafc; letter-spacing:-0.02em; font-family:'Outfit',sans-serif;">HydroShield</div>
+        <div style="font-size:13px; color:#38bdf8; margin-top:6px; font-weight:500;">Calculating Safe Point Evacuation Routes...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- React 18 & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Babel Standalone for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Register Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js').catch(err => console.log('SW registration error:', err));
+      });
+    }
+  </script>
+
+  <!-- React Application Component -->
+  <script type="text/babel" src="/static/app.js"></script>
+</body>
+</html>
