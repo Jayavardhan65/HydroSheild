@@ -48,16 +48,26 @@ def init_db():
     """)
 
     # Table 3: sos_logs
-    # (id, lat, lon, contact, created_at)
+    # (id, lat, lon, contact, location_name, device_id, created_at)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS sos_logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         lat REAL NOT NULL,
         lon REAL NOT NULL,
         contact TEXT NOT NULL,
+        location_name TEXT DEFAULT 'Current Location',
+        device_id TEXT DEFAULT '',
         created_at TEXT NOT NULL
     )
     """)
+
+    # Ensure columns exist for upgraded schemas
+    cursor.execute("PRAGMA table_info(sos_logs)")
+    sos_cols = [c[1] for c in cursor.fetchall()]
+    if "device_id" not in sos_cols:
+        cursor.execute("ALTER TABLE sos_logs ADD COLUMN device_id TEXT DEFAULT ''")
+    if "location_name" not in sos_cols:
+        cursor.execute("ALTER TABLE sos_logs ADD COLUMN location_name TEXT DEFAULT ''")
 
     conn.commit()
 
@@ -177,14 +187,14 @@ def get_all_shelters() -> List[Dict[str, Any]]:
     conn.close()
     return [dict(r) for r in rows]
 
-def log_sos(lat: float, lon: float, contact: str) -> int:
+def log_sos(lat: float, lon: float, contact: str, location_name: str = "Current Location", device_id: str = "") -> int:
     conn = get_connection()
     cursor = conn.cursor()
     created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute("""
-    INSERT INTO sos_logs (lat, lon, contact, created_at)
-    VALUES (?, ?, ?, ?)
-    """, (lat, lon, contact, created_at))
+    INSERT INTO sos_logs (lat, lon, contact, location_name, device_id, created_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """, (lat, lon, contact, location_name, device_id, created_at))
     sos_id = cursor.lastrowid
     conn.commit()
     conn.close()
@@ -197,3 +207,24 @@ def get_sos_logs(limit: int = 30) -> List[Dict[str, Any]]:
     rows = cursor.fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+def get_recent_sos_logs(since_seconds: int = 600) -> List[Dict[str, Any]]:
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM sos_logs ORDER BY id DESC LIMIT 50")
+    rows = cursor.fetchall()
+    conn.close()
+
+    results = []
+    now = datetime.now()
+    for r in rows:
+        item = dict(r)
+        try:
+            t = datetime.strptime(item["created_at"], "%Y-%m-%d %H:%M:%S")
+            diff = (now - t).total_seconds()
+            if -2 <= diff <= since_seconds:
+                item["seconds_ago"] = max(1, round(diff))
+                results.append(item)
+        except Exception:
+            pass
+    return results

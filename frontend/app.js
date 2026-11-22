@@ -1,4 +1,4 @@
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect, useRef, useMemo } = React;
 
 // Multilingual Dictionary
 const I18N = {
@@ -270,7 +270,18 @@ const detectInitialMode = () => {
   return (isMobileUA || isNarrowScreen) ? 'mobile' : 'windows';
 };
 
+// Unique Device Identifier to avoid self-echoing SOS beacons
+const getDeviceId = () => {
+  let id = localStorage.getItem('hydroshield_device_uuid');
+  if (!id) {
+    id = 'dev_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+    localStorage.setItem('hydroshield_device_uuid', id);
+  }
+  return id;
+};
+
 function App() {
+  const deviceId = useMemo(() => getDeviceId(), []);
   const [viewMode, setViewMode] = useState(detectInitialMode);
   const [lang, setLang] = useState("en");
   const t = I18N[lang] || I18N.en;
@@ -297,12 +308,17 @@ function App() {
   // Alerts History
   const [alertHistory, setAlertHistory] = useState([]);
 
-  // Modals
+  // Modals & 10KM Surrounding Distress Alerts
   const [showSosModal, setShowSosModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [modelInfo, setModelInfo] = useState(null);
   const [sirenActive, setSirenActive] = useState(false);
   const [sosResult, setSosResult] = useState(null);
+
+  // 10km Mesh Proximity Distress Beacons from other devices
+  const [activeNearbySos, setActiveNearbySos] = useState(null);
+  const [dismissedSosIds, setDismissedSosIds] = useState([]);
+  const sirenActiveRef = useRef(false);
 
   // Admin Broadcast form
   const [adminForm, setAdminForm] = useState({
@@ -565,7 +581,7 @@ function App() {
     };
   }, [isChartVisible, telemetry, viewMode, desktopRightTab, activeTab]);
 
-  // Emergency SOS Trigger
+  // Emergency SOS Trigger (broadcasts with unique deviceId)
   const handleTriggerSos = () => {
     if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 300]);
     setShowSosModal(true);
@@ -576,12 +592,60 @@ function App() {
         lat: currentCoords.lat,
         lon: currentCoords.lon,
         contact: "+91-SOS-STATE-EMERGENCY-DISPATCH",
-        location_name: currentCoords.name
+        location_name: currentCoords.name,
+        device_id: deviceId
       })
     })
       .then(res => res.json())
       .then(data => setSosResult(data))
       .catch(err => console.error(err));
+  };
+
+  // Continuous Proximity Listener: Checks for any SOS distress signals triggered within 10km
+  useEffect(() => {
+    if (!currentCoords.lat || !currentCoords.lon) return;
+
+    const pollNearbyDistress = () => {
+      fetch(`/api/sos/nearby?lat=${currentCoords.lat}&lon=${currentCoords.lon}&radius_km=10.0&device_id=${deviceId}&since_seconds=300`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.has_nearby_sos && data.alerts && data.alerts.length > 0) {
+            const nearestAlert = data.alerts[0];
+            // Only trigger alert if this specific alert has not been dismissed by the user
+            if (!dismissedSosIds.includes(nearestAlert.id)) {
+              setActiveNearbySos(nearestAlert);
+              // Sound the auditory siren automatically across surrounding devices!
+              if (!sirenActiveRef.current) {
+                siren.start();
+                setSirenActive(true);
+                sirenActiveRef.current = true;
+              }
+              // Vibrate the phone / device
+              if (navigator.vibrate) {
+                navigator.vibrate([400, 150, 400, 150, 600]);
+              }
+            }
+          } else {
+            if (activeNearbySos) {
+              setActiveNearbySos(null);
+            }
+          }
+        })
+        .catch(err => console.warn("Nearby SOS check error:", err));
+    };
+
+    pollNearbyDistress();
+    const interval = setInterval(pollNearbyDistress, 3500); // Poll every 3.5 seconds
+    return () => clearInterval(interval);
+  }, [currentCoords.lat, currentCoords.lon, deviceId, dismissedSosIds]);
+
+  // Silence Siren and Acknowledge Alert for surrounding devices
+  const dismissNearbySos = (alertId) => {
+    siren.stop();
+    setSirenActive(false);
+    sirenActiveRef.current = false;
+    setDismissedSosIds(prev => [...prev, alertId]);
+    setActiveNearbySos(null);
   };
 
   const toggleSiren = () => {
@@ -1753,6 +1817,94 @@ function App() {
 
               <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '10px', borderRadius: '8px', fontSize: '0.74rem', color: '#fde68a' }}>
                 📌 <b>Hydrological Catchment Architecture:</b> Uses elevation, slope angle, 1-hour rainfall burst intensity, antecedent 24h accumulation, and soil moisture saturation to predict flash flooding in mountain ravines.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ====================================================================
+          SHARED MODAL 3: SURROUNDING 10KM EMERGENCY DISTRESS BEACON & SIREN
+          Triggered automatically when ANY other device within 10km triggers SOS
+          ==================================================================== */}
+      {activeNearbySos && (
+        <div className="nearby-sos-overlay">
+          <div className="nearby-sos-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(239, 68, 68, 0.3)', paddingBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '30px', animation: 'hydro-pulse 1s infinite' }}>🚨</span>
+                <div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#fca5a5', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                    Nearby Distress Signal Detected!
+                  </div>
+                  <div style={{ fontSize: '0.74rem', color: '#f87171' }}>
+                    Triggered within 10 km ({activeNearbySos.distance_km} km from your live location)
+                  </div>
+                </div>
+              </div>
+
+              {/* Animated Audio Soundwave Indicator */}
+              <div className="siren-soundwave-bars" title="Auditory siren actively sounding">
+                <div className="siren-soundwave-bar"></div>
+                <div className="siren-soundwave-bar"></div>
+                <div className="siren-soundwave-bar"></div>
+                <div className="siren-soundwave-bar"></div>
+                <div className="siren-soundwave-bar"></div>
+              </div>
+            </div>
+
+            {/* Alert Details Card */}
+            <div style={{ background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.35)', borderRadius: '12px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', fontWeight: 700, color: '#fca5a5' }}>
+                  Distressed Resident Proximity
+                </span>
+                <span style={{ fontSize: '0.92rem', fontWeight: 900, color: '#fef08a', background: 'rgba(234, 179, 8, 0.25)', border: '1px solid #facc15', padding: '2px 8px', borderRadius: '4px' }}>
+                  📍 {activeNearbySos.distance_km} km away
+                </span>
+              </div>
+
+              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ffffff' }}>
+                Catchment: {activeNearbySos.location_name}
+              </div>
+
+              <div style={{ fontSize: '0.76rem', color: '#cbd5e1' }}>
+                GPS: <b>{activeNearbySos.lat.toFixed(5)}° N, {activeNearbySos.lon.toFixed(5)}° E</b> • Triggered <b>{activeNearbySos.seconds_ago}s ago</b> ({activeNearbySos.created_at})
+              </div>
+
+              <div style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+                Helpline / Emergency Dispatch: <b>{activeNearbySos.contact}</b>
+              </div>
+            </div>
+
+            {/* Actions for surrounding device user */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <a
+                href={activeNearbySos.google_maps_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-gmaps-navigate"
+                style={{ background: 'linear-gradient(135deg, #ef4444, #b91c1c)', borderColor: '#fca5a5', padding: '13px', fontSize: '0.95rem' }}
+              >
+                🧭 Navigate to Distressed Person in Google Maps ↗
+              </a>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <a
+                  href={`tel:${activeNearbySos.contact.replace(/[^0-9+]/g, '') || '112'}`}
+                  className="win-btn primary"
+                  style={{ flex: 1, justifyContent: 'center', padding: '10px' }}
+                >
+                  📞 Call 112 / Responders
+                </a>
+
+                <button
+                  className="win-btn"
+                  onClick={() => dismissNearbySos(activeNearbySos.id)}
+                  style={{ flex: 1, justifyContent: 'center', background: 'rgba(30, 41, 59, 0.9)', padding: '10px', color: '#fff' }}
+                >
+                  🔇 Silence Siren & Dismiss
+                </button>
               </div>
             </div>
           </div>

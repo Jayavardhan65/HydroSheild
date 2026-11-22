@@ -1377,3 +1377,64 @@ html, body {
   50% { transform: rotate(15deg); }
   100% { transform: rotate(0deg); }
 }
+
+/* ==========================================================================
+   SURROUNDING 10KM EMERGENCY SOS PROXIMITY ALERT & SIREN OVERLAY
+   ========================================================================== */
+.nearby-sos-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 0, 3, 0.9);
+  backdrop-filter: blur(14px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.nearby-sos-card {
+  background: linear-gradient(145deg, #1c060b, #090103);
+  border: 2px solid #ef4444;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 540px;
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.75), 0 20px 40px rgba(0, 0, 0, 0.9);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: nearbyAlertPulse 1.6s infinite;
+  color: #fff;
+}
+
+@keyframes nearbyAlertPulse {
+  0%, 100% { border-color: #ef4444; box-shadow: 0 0 30px rgba(239, 68, 68, 0.6); }
+  50% { border-color: #fca5a5; box-shadow: 0 0 60px rgba(239, 68, 68, 0.95); }
+}
+
+.siren-soundwave-bars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 28px;
+}
+
+.siren-soundwave-bar {
+  width: 4px;
+  height: 20px;
+  background: #ef4444;
+  border-radius: 2px;
+  animation: soundwaveBounce 0.8s ease-in-out infinite;
+}
+.siren-soundwave-bar:nth-child(2) { animation-delay: 0.1s; height: 26px; }
+.siren-soundwave-bar:nth-child(3) { animation-delay: 0.2s; height: 16px; }
+.siren-soundwave-bar:nth-child(4) { animation-delay: 0.3s; height: 24px; }
+.siren-soundwave-bar:nth-child(5) { animation-delay: 0.4s; height: 18px; }
+
+@keyframes soundwaveBounce {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.6; }
+  50% { transform: scaleY(1.2); opacity: 1; }
+}

@@ -15,7 +15,7 @@ from pydantic import BaseModel
 
 from .database import (
     init_db, log_alert_multi, get_alerts, get_all_shelters,
-    log_sos, get_sos_logs, get_active_admin_alerts, get_latest_alert_for_location
+    log_sos, get_sos_logs, get_recent_sos_logs, get_active_admin_alerts, get_latest_alert_for_location
 )
 from .weather_service import (
     PRESET_REGIONS, fetch_weather_data, haversine_distance_km,
@@ -79,6 +79,7 @@ class SOSRequest(BaseModel):
     lon: float
     contact: str
     location_name: Optional[str] = "Current Location"
+    device_id: Optional[str] = ""
 
 # Endpoints
 @app.get("/api/locations")
@@ -312,8 +313,14 @@ def create_admin_alert(req: AdminAlertRequest):
 
 @app.post("/api/sos")
 def trigger_sos(req: SOSRequest):
-    """Log emergency SOS dispatch and return emergency coordinates and rescue contacts."""
-    sos_id = log_sos(lat=req.lat, lon=req.lon, contact=req.contact)
+    """Log emergency SOS dispatch, record device_id, and broadcast to all devices within 10km."""
+    sos_id = log_sos(
+        lat=req.lat,
+        lon=req.lon,
+        contact=req.contact,
+        location_name=req.location_name or "Current Location",
+        device_id=req.device_id or ""
+    )
     maps_link = f"https://maps.google.com/?q={req.lat:.6f},{req.lon:.6f}"
     return {
         "success": True,
@@ -322,7 +329,52 @@ def trigger_sos(req: SOSRequest):
         "lon": req.lon,
         "maps_link": maps_link,
         "disaster_helpline": "112 / 1077 (NDRF & SDRF Control Room)",
-        "message": "SOS emergency beacon recorded. Rescue teams and local authorities alerted."
+        "message": "SOS emergency beacon recorded and broadcast to all devices within 10 km radius."
+    }
+
+@app.get("/api/sos/nearby")
+def get_nearby_sos(
+    lat: float = Query(..., description="Device current latitude"),
+    lon: float = Query(..., description="Device current longitude"),
+    radius_km: float = Query(10.0, description="Alert radius in kilometers (default 10km)"),
+    device_id: Optional[str] = Query(None, description="Current device identifier to avoid echoing self"),
+    since_seconds: int = Query(600, description="Window of active SOS alerts in seconds")
+):
+    """
+    Checks for active SOS distress beacons triggered within 10km surrounding.
+    If another device within 10km triggered SOS, returns details so all surrounding
+    devices automatically sound auditory sirens and display proximity rescue routes.
+    """
+    recent_logs = get_recent_sos_logs(since_seconds=since_seconds)
+    nearby_alerts = []
+
+    for alert in recent_logs:
+        # Don't alert self if device_id matches
+        if device_id and alert.get("device_id") and alert["device_id"] == device_id:
+            continue
+
+        dist = haversine_distance_km(lat, lon, alert["lat"], alert["lon"])
+        if dist <= radius_km:
+            nearby_alerts.append({
+                "id": alert["id"],
+                "lat": alert["lat"],
+                "lon": alert["lon"],
+                "contact": alert.get("contact", "112"),
+                "location_name": alert.get("location_name", "Nearby Catchment"),
+                "device_id": alert.get("device_id", ""),
+                "created_at": alert["created_at"],
+                "seconds_ago": alert.get("seconds_ago", 30),
+                "distance_km": round(dist, 2),
+                "google_maps_url": f"https://www.google.com/maps/dir/?api=1&origin={lat},{lon}&destination={alert['lat']},{alert['lon']}&travelmode=driving"
+            })
+
+    nearby_alerts.sort(key=lambda x: x["distance_km"])
+
+    return {
+        "has_nearby_sos": len(nearby_alerts) > 0,
+        "alerts_count": len(nearby_alerts),
+        "radius_km": radius_km,
+        "alerts": nearby_alerts
     }
 
 @app.get("/api/sos/logs")

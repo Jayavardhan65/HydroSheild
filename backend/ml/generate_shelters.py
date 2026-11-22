@@ -132,3 +132,4 @@ with open('backend/data/shelters.json', 'w', encoding='utf-8') as f:
     json.dump(shelters, f, indent=2)
 
 print("Saved successfully to backend/data/shelters.json")
+
