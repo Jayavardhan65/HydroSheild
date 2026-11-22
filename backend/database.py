@@ -31,7 +31,7 @@ def init_db():
     """)
 
     # Table 2: shelters
-    # (id, name, lat, lon, capacity, [plus elevation_m, type, contact for map & rescue finder])
+    # (id, name, lat, lon, capacity, elevation_m, type, contact, region, supplies)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS shelters (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,7 +41,9 @@ def init_db():
         capacity INTEGER NOT NULL,
         elevation_m REAL DEFAULT 1000.0,
         type TEXT DEFAULT 'Relief Camp',
-        contact TEXT DEFAULT '112 / District Helpline'
+        contact TEXT DEFAULT '112 / District Helpline',
+        region TEXT DEFAULT '',
+        supplies TEXT DEFAULT ''
     )
     """)
 
@@ -59,17 +61,50 @@ def init_db():
 
     conn.commit()
 
-    # Seed shelters if empty
-    cursor.execute("SELECT COUNT(*) as count FROM shelters")
-    count = cursor.fetchone()["count"]
-    if count == 0 and os.path.exists(SHELTERS_JSON):
+    # Seed shelters if empty or less than 1000
+    cursor.execute("SELECT COUNT(*) as count FROM sqlite_master WHERE type='table' AND name='shelters'")
+    table_exists = cursor.fetchone()["count"] > 0
+    count = 0
+    if table_exists:
+        try:
+            cursor.execute("SELECT COUNT(*) as count FROM shelters")
+            count = cursor.fetchone()["count"]
+        except Exception:
+            count = 0
+
+    if count < 1000 and os.path.exists(SHELTERS_JSON):
+        cursor.execute("DROP TABLE IF EXISTS shelters")
+        cursor.execute("""
+        CREATE TABLE shelters (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            lat REAL NOT NULL,
+            lon REAL NOT NULL,
+            capacity INTEGER NOT NULL,
+            elevation_m REAL DEFAULT 1000.0,
+            type TEXT DEFAULT 'Relief Camp',
+            contact TEXT DEFAULT '112 / District Helpline',
+            region TEXT DEFAULT '',
+            supplies TEXT DEFAULT ''
+        )
+        """)
         with open(SHELTERS_JSON, "r", encoding="utf-8") as f:
             shelters_data = json.load(f)
         for s in shelters_data:
             cursor.execute("""
-            INSERT INTO shelters (name, lat, lon, capacity, elevation_m, type, contact)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (s["name"], s["lat"], s["lon"], s["capacity"], s.get("elevation_m", 1000.0), s.get("type", "Relief Center"), s.get("contact", "+91 82722 28432")))
+            INSERT INTO shelters (name, lat, lon, capacity, elevation_m, type, contact, region, supplies)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                s["name"],
+                s["lat"],
+                s["lon"],
+                s["capacity"],
+                s.get("elevation_m", 1000.0),
+                s.get("type", "Relief Center"),
+                s.get("contact", "+91 82722 28432"),
+                s.get("region", ""),
+                s.get("supplies", "First Aid, Drinking Water, Emergency Power")
+            ))
         conn.commit()
 
     # Seed initial alerts if empty

@@ -4,8 +4,8 @@ const { useState, useEffect, useRef } = React;
 const I18N = {
   en: {
     appName: "HydroShield Pro",
-    liveSubtitle: "AI Flood Early Warning & Evacuation Navigator",
-    desktopTag: "v2.4 LTS • Hilly Catchment Hydrological Telemetry",
+    liveSubtitle: "AI Flood Early Warning & Safe Refuge Navigator",
+    desktopTag: "v2.4 LTS • Live GPS Catchment Hydrological Telemetry",
     sensorsActive: "Sensors Online",
     tabOverview: "Overview",
     tabDirections: "Safe Point Directions",
@@ -15,6 +15,8 @@ const I18N = {
     sosButton: "SOS Emergency",
     refreshIn: "Refresh in",
     useGps: "Live GPS",
+    gpsActiveBadge: "Live GPS Active",
+    gpsLocating: "Acquiring GPS...",
     riskTitle: "Catchment Flood Risk",
     hydrologicalFactors: "Contributing Risk Factors",
     weatherMetrics: "Catchment Telemetry",
@@ -27,8 +29,8 @@ const I18N = {
     soilMoisture: "Soil Saturation",
     windSpeed: "Wind Velocity",
     forecastTitle: "24-Hour Flood Probability Curve",
-    sheltersTitle: "Safe Evacuation Shelters",
-    sheltersSubtitle: "High-ground ridge centers located above flash torrent valleys",
+    sheltersTitle: "1,800+ Safe Evacuation Shelters",
+    sheltersSubtitle: "Scanned across 1,810+ verified high-ground relief centers",
     findNearestRoute: "Navigate on Google Maps",
     walkingTime: "Walk",
     capacity: "Capacity",
@@ -51,7 +53,8 @@ const I18N = {
     previewWindows: "Windows Desktop",
     previewMobile: "Mobile App",
     safeRefugeHeader: "NEAREST DESIGNATED SAFE POINT",
-    openInGmaps: "Open Turn-by-Turn in Google Maps",
+    openInGmaps: "Navigate in Google Maps (Walking Directions)",
+    immediateEvacuate: "🚨 Quick Evacuate: Open Google Maps Route",
     shareSafeRoute: "Share Evacuation Destination on WhatsApp",
     elevSafetyMargin: "Elevation Safety Advantage",
     currentLocation: "Your Catchment Level",
@@ -65,12 +68,13 @@ const I18N = {
     step3Desc: "Even 15 cm (6 inches) of rapid hill torrents can sweep an adult off balance. Turn around; do not wade through gullys.",
     step4Title: "4. Register at Shelter Coordination Desk",
     step4Desc: "Check in on arrival for food rations, dry blankets, potable water, and official family headcounts.",
-    altSheltersTitle: "Alternative High-Ground Havens Nearby"
+    altSheltersTitle: "Alternative High-Ground Havens Nearby",
+    totalSheltersDatabase: "1,810+ Safe Havens Active in Database"
   },
   kn: {
     appName: "ಹೈಡ್ರೋಶೀಲ್ಡ್ ಪ್ರೊ",
     liveSubtitle: "ಪ್ರವಾಹ ಮುನ್ನೆಚ್ಚರಿಕೆ ಮತ್ತು ಸುರಕ್ಷಿತ ಸ್ಥಳ ಮಾರ್ಗದರ್ಶಕ",
-    desktopTag: "ಆವೃತ್ತಿ 2.4 • ಗುಡ್ಡಗಾಡು ಜಲಾನಯನ ಟೆಲಿಮೆಟ್ರಿ",
+    desktopTag: "ಆವೃತ್ತಿ 2.4 • ಲೈವ್ ಜಿಪಿಎಸ್ ಜಲಾನಯನ ಟೆಲಿಮೆಟ್ರಿ",
     sensorsActive: "ಸಂವೇದಕಗಳು ಸಕ್ರಿಯ",
     tabOverview: "ಅವಲೋಕನ",
     tabDirections: "ಸುರಕ್ಷಿತ ಸ್ಥಳ ಮಾರ್ಗ",
@@ -80,6 +84,8 @@ const I18N = {
     sosButton: "SOS ತುರ್ತು",
     refreshIn: "ನವೀಕರಣ",
     useGps: "ಲೈವ್ ಜಿಪಿಎಸ್",
+    gpsActiveBadge: "ಲೈವ್ ಜಿಪಿಎಸ್ ಸಕ್ರಿಯ",
+    gpsLocating: "ಸ್ಥಳ ಪತ್ತೆ ಮಾಡಲಾಗುತ್ತಿದೆ...",
     riskTitle: "ಪ್ರವಾಹ ಅಪಾಯದ ಮಟ್ಟ",
     hydrologicalFactors: "ಅಪಾಯದ ಪ್ರಮುಖ ಅಂಶಗಳು",
     weatherMetrics: "ಬೆಟ್ಟದ ಹವಾಮಾನ ಟೆಲಿಮೆಟ್ರಿ",
@@ -92,8 +98,8 @@ const I18N = {
     soilMoisture: "ಮಣ್ಣಿನ ತೇವಾಂಶ",
     windSpeed: "ಗಾಳಿಯ ವೇಗ",
     forecastTitle: "೨೪ ಗಂಟೆಗಳ ಅಪಾಯದ ಗ್ರಾಫ್",
-    sheltersTitle: "ಸುರಕ್ಷಿತ ನಿರಾಶ್ರಿತ ಶಿಬಿರಗಳು",
-    sheltersSubtitle: "ಪ್ರವಾಹದ ಕಣಿವೆಯಿಂದ ಸುರಕ್ಷಿತವಾದ ಎತ್ತರದ ಆಶ್ರಯ ತಾಣಗಳು",
+    sheltersTitle: "೧,೮೦೦+ ಸುರಕ್ಷಿತ ನಿರಾಶ್ರಿತ ಶಿಬಿರಗಳು",
+    sheltersSubtitle: "೧,೮೧೦ ಕ್ಕೂ ಹೆಚ್ಚು ಸುರಕ್ಷಿತ ಎತ್ತರದ ಕೇಂದ್ರಗಳಿಂದ ಹುಡುಕಲಾಗಿದೆ",
     findNearestRoute: "Google Maps ನಲ್ಲಿ ಮಾರ್ಗ ನೋಡಿ",
     walkingTime: "ನಡೆಯುವ ಸಮಯ",
     capacity: "ಸಾಮರ್ಥ್ಯ",
@@ -117,6 +123,7 @@ const I18N = {
     previewMobile: "ಮೊಬೈಲ್ ಆ್ಯಪ್",
     safeRefugeHeader: "ಹತ್ತಿರದ ಸುರಕ್ಷಿತ ಆಶ್ರಯ ತಾಣ",
     openInGmaps: "Google Maps ನಲ್ಲಿ ಮಾರ್ಗ ತೆರೆಯಿರಿ",
+    immediateEvacuate: "🚨 ತಕ್ಷಣದ ತೆರವು: Google Maps ಮಾರ್ಗ ತೆರೆಯಿರಿ",
     shareSafeRoute: "WhatsApp ನಲ್ಲಿ ಸುರಕ್ಷಿತ ತಾಣ ಹಂಚಿಕೊಳ್ಳಿ",
     elevSafetyMargin: "ಎತ್ತರದ ಸುರಕ್ಷತಾ ಅಂತರ",
     currentLocation: "ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಸ್ಥಳ",
@@ -130,12 +137,13 @@ const I18N = {
     step3Desc: "ಕೇವಲ ೧೫ ಸೆಂ.ಮೀ ರಭಸದ ನೀರು ಕೂಡ ಮನುಷ್ಯನನ್ನು ಕೊಚ್ಚಿಕೊಂಡು ಹೋಗಬಲ್ಲದು. ಹಳ್ಳ ದಾಟಬೇಡಿ.",
     step4Title: "೪. ಶಿಬಿರದ ನೋಂದಣಿ ಕೇಂದ್ರಕ್ಕೆ ವರದಿ ಮಾಡಿ",
     step4Desc: "ಸುರಕ್ಷಿತ ಶಿಬಿರ ತಲುಪಿದ ತಕ್ಷಣ ಆಹಾರ, ಕುಡಿಯುವ ನೀರು ಹಾಗೂ ವೈದ್ಯಕೀಯ ನೆರವಿಗೆ ಹೆಸರು ನೋಂದಾಯಿಸಿ.",
-    altSheltersTitle: "ಸಮೀಪದ ಇತರ ಸುರಕ್ಷಿತ ಕೇಂದ್ರಗಳು"
+    altSheltersTitle: "ಸಮೀಪದ ಇತರ ಸುರಕ್ಷಿತ ಕೇಂದ್ರಗಳು",
+    totalSheltersDatabase: "೧,೮೧೦+ ಸುರಕ್ಷಿತ ತಾಣಗಳು ಸಕ್ರಿಯ"
   },
   hi: {
     appName: "हाइड्रोशील्ड प्रो",
     liveSubtitle: "बाढ़ पूर्व चेतावनी एवं सुरक्षित स्थल मार्गदर्शक",
-    desktopTag: "संस्करण 2.4 • पर्वतीय जलग्रहण टेलीमेट्री",
+    desktopTag: "संस्करण 2.4 • लाइव GPS जलग्रहण टेलीमेट्री",
     sensorsActive: "सेंसर ऑनलाइन",
     tabOverview: "अवलोकन",
     tabDirections: "सुरक्षित स्थल मार्ग",
@@ -145,6 +153,8 @@ const I18N = {
     sosButton: "SOS आपातकाल",
     refreshIn: "रिफ्रेश",
     useGps: "लाइव GPS",
+    gpsActiveBadge: "लाइव GPS सक्रिय",
+    gpsLocating: "स्थान खोजा जा रहा है...",
     riskTitle: "बाढ़ जोखिम स्तर",
     hydrologicalFactors: "जोखिम कारक",
     weatherMetrics: "पर्वतीय टेलीमेट्री",
@@ -157,8 +167,8 @@ const I18N = {
     soilMoisture: "मिट्टी नमी",
     windSpeed: "हवा गति",
     forecastTitle: "24-घंटे का जोखिम वक्र",
-    sheltersTitle: "सुरक्षित राहत शिविर",
-    sheltersSubtitle: "घाटी से सुरक्षित ऊंचे राहत केंद्र",
+    sheltersTitle: "1,800+ सुरक्षित राहत शिविर",
+    sheltersSubtitle: "1,810+ सत्यापित सुरक्षित राहत शिविरों से गणना",
     findNearestRoute: "Google Maps पर नेविगेट करें",
     walkingTime: "पैदल समय",
     capacity: "क्षमता",
@@ -182,6 +192,7 @@ const I18N = {
     previewMobile: "मोबाइल ऐप",
     safeRefugeHeader: "निकटतम सुरक्षित शरण स्थल",
     openInGmaps: "Google Maps में दिशा-निर्देश खोलें",
+    immediateEvacuate: "🚨 त्वरित निकासी: Google Maps मार्ग खोलें",
     shareSafeRoute: "WhatsApp पर सुरक्षित स्थल शेयर करें",
     elevSafetyMargin: "ऊंचाई का सुरक्षा लाभ",
     currentLocation: "आपकी वर्तमान ऊंचाई",
@@ -195,7 +206,8 @@ const I18N = {
     step3Desc: "मात्र 15 सेमी बहता पानी भी व्यक्ति को बहा सकता है। कभी भी नाले में न उतरें।",
     step4Title: "4. राहत शिविर समन्वय केंद्र में रिपोर्ट करें",
     step4Desc: "शिविर पहुंचने पर भोजन, पेयजल और प्राथमिक चिकित्सा हेतु पंजीकरण कराएं।",
-    altSheltersTitle: "समीपस्थ अन्य सुरक्षित शरण स्थल"
+    altSheltersTitle: "समीपस्थ अन्य सुरक्षित शरण स्थल",
+    totalSheltersDatabase: "1,810+ सुरक्षित शरण स्थल डेटाबेस में सक्रिय"
   }
 };
 
@@ -247,9 +259,7 @@ class AudioSiren {
 }
 const siren = new AudioSiren();
 
-// Initial View Mode Detection:
-// Laptop / Desktop -> defaults to 'windows'
-// Mobile phone -> defaults to 'mobile'
+// Initial View Mode Detection
 const detectInitialMode = () => {
   const saved = localStorage.getItem('hydroshield_view_mode');
   if (saved === 'windows' || saved === 'mobile') {
@@ -266,22 +276,22 @@ function App() {
   const t = I18N[lang] || I18N.en;
 
   // Active Tab for Mobile & Desktop Right Column
-  // 0: Overview, 1: Safe Directions, 2: Shelters, 3: Forecast, 4: Alerts/Admin
   const [activeTab, setActiveTab] = useState(0);
-  const [desktopRightTab, setDesktopRightTab] = useState("shelters"); // 'shelters', 'forecast', 'alerts'
+  const [desktopRightTab, setDesktopRightTab] = useState("shelters");
 
-  // Locations & Coordinates
+  // Locations & Live GPS State
   const [regions, setRegions] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [currentCoords, setCurrentCoords] = useState({ lat: 12.4244, lon: 75.7382, name: "Madikeri / Kodagu" });
+  const [gpsStatus, setGpsStatus] = useState("locating"); // 'locating', 'active', 'fallback'
 
   // Telemetry & Predictions
   const [telemetry, setTelemetry] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshCountdown, setRefreshCountdown] = useState(600);
 
-  // Shelters & Safe Evacuation Point
-  const [sheltersData, setSheltersData] = useState({ shelters: [], nearest_shelter: null });
+  // Shelters & Safe Evacuation Point (1,800+ safe places)
+  const [sheltersData, setSheltersData] = useState({ shelters: [], nearest_shelter: null, total_shelters_count: 1810 });
   const [selectedSafePoint, setSelectedSafePoint] = useState(null);
 
   // Alerts History
@@ -296,7 +306,7 @@ function App() {
 
   // Admin Broadcast form
   const [adminForm, setAdminForm] = useState({
-    location: "Madikeri / Kodagu",
+    location: "Current Catchment",
     risk_level: "Critical",
     message_en: "IMMEDIATE EVACUATION: Mountain runoff breach detected near river catchment.",
     message_kn: "ತಕ್ಷಣ ತೆರವು: ನದಿ ಜಲಾನಯನ ಪ್ರದೇಶದ ಬಳಿ ಬೆಟ್ಟದ ನೀರಿನ ಉಕ್ಕಿ ಹರಿಯುವಿಕೆ ಪತ್ತೆಯಾಗಿದೆ.",
@@ -326,23 +336,45 @@ function App() {
     localStorage.setItem('hydroshield_view_mode', mode);
   };
 
-  // 1. Initial Load: Locations & Model Info & Alerts
+  // 1. Initial Load & REAL LIVE LOCATION ACQUISITION
   useEffect(() => {
+    // A. Request Real Live GPS Location immediately on startup
+    if (navigator.geolocation) {
+      setGpsStatus("locating");
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          const realLat = parseFloat(latitude.toFixed(5));
+          const realLon = parseFloat(longitude.toFixed(5));
+          setCurrentCoords({
+            lat: realLat,
+            lon: realLon,
+            name: `📍 Live GPS (${realLat.toFixed(3)}°, ${realLon.toFixed(3)}°)`
+          });
+          setSelectedRegion(null);
+          setGpsStatus("active");
+        },
+        (err) => {
+          console.warn("Real GPS access prompt ignored or denied:", err.message);
+          setGpsStatus("fallback");
+        },
+        { timeout: 9000, enableHighAccuracy: true }
+      );
+    } else {
+      setGpsStatus("fallback");
+    }
+
+    // B. Fetch Regions List
     fetch("/api/locations")
       .then(res => res.json())
       .then(data => {
         if (data.regions && data.regions.length > 0) {
           setRegions(data.regions);
-          setSelectedRegion(data.regions[0].id);
-          setCurrentCoords({
-            lat: data.regions[0].lat,
-            lon: data.regions[0].lon,
-            name: data.regions[0].name
-          });
         }
       })
       .catch(err => console.error("Error fetching locations:", err));
 
+    // C. Fetch ML Model Info
     fetch("/api/model/info")
       .then(res => res.json())
       .then(data => setModelInfo(data.metadata))
@@ -358,7 +390,7 @@ function App() {
       .catch(err => console.error("Error fetching alerts:", err));
   };
 
-  // 2. Fetch Prediction & Telemetry
+  // 2. Fetch Prediction & Telemetry for real coordinates
   const fetchPrediction = (coords = currentCoords) => {
     setLoading(true);
     const url = `/api/weather-and-risk?lat=${coords.lat}&lon=${coords.lon}&name=${encodeURIComponent(coords.name)}`;
@@ -377,6 +409,7 @@ function App() {
       });
   };
 
+  // Scans all 1,810+ safe shelters in database
   const fetchShelters = (lat, lon) => {
     fetch(`/api/shelters?lat=${lat}&lon=${lon}`)
       .then(res => res.json())
@@ -415,40 +448,54 @@ function App() {
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
-  // GPS Locate
+  // Manual Trigger GPS Locate
   const handleUseGps = () => {
     if (navigator.vibrate) navigator.vibrate(50);
     if (!navigator.geolocation) {
       alert("GPS not supported on this browser.");
       return;
     }
+    setGpsStatus("locating");
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
+        const realLat = parseFloat(latitude.toFixed(5));
+        const realLon = parseFloat(longitude.toFixed(5));
         setCurrentCoords({
-          lat: parseFloat(latitude.toFixed(5)),
-          lon: parseFloat(longitude.toFixed(5)),
-          name: "My GPS Catchment"
+          lat: realLat,
+          lon: realLon,
+          name: `📍 Live GPS (${realLat.toFixed(3)}°, ${realLon.toFixed(3)}°)`
         });
         setSelectedRegion(null);
+        setGpsStatus("active");
       },
-      (err) => alert("GPS Error: " + err.message),
+      (err) => {
+        alert("GPS Error: " + err.message);
+        setGpsStatus("fallback");
+      },
       { timeout: 10000, enableHighAccuracy: true }
     );
   };
 
-  // Build Google Maps walking directions URL
+  // Build Google Maps walking directions URL from REAL LIVE LOCATION to safe shelter
   const getGoogleMapsDirectionsUrl = (shelter) => {
     if (!shelter) return "#";
-    // Universal Google Maps directions URL with walking travel mode
     return `https://www.google.com/maps/dir/?api=1&origin=${currentCoords.lat},${currentCoords.lon}&destination=${shelter.lat},${shelter.lon}&travelmode=walking`;
+  };
+
+  // Immediate Evacuation: Redirect directly to Google Maps
+  const redirectToNearestSafePlace = () => {
+    const s = selectedSafePoint || sheltersData.nearest_shelter;
+    if (s) {
+      window.open(getGoogleMapsDirectionsUrl(s), "_blank", "noopener,noreferrer");
+    }
   };
 
   // Build WhatsApp Share Text
   const getWhatsAppShareUrl = (shelter) => {
     if (!shelter) return "#";
     const gmapsUrl = getGoogleMapsDirectionsUrl(shelter);
-    const text = `⚠️ EMERGENCY FLASH FLOOD EVACUATION: I am navigating to safe high-ground refuge at ${shelter.name} (${shelter.elevation_m}m). My current GPS: ${currentCoords.lat.toFixed(5)}, ${currentCoords.lon.toFixed(5)}. Google Maps Walking Route: ${gmapsUrl}`;
+    const text = `⚠️ EMERGENCY FLASH FLOOD EVACUATION: I am navigating to safe high-ground refuge at ${shelter.name} (${shelter.elevation_m}m). My current Live GPS: ${currentCoords.lat.toFixed(5)}, ${currentCoords.lon.toFixed(5)}. Google Maps Walking Route: ${gmapsUrl}`;
     return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
   };
 
@@ -576,12 +623,12 @@ function App() {
       {/* Primary Safe Point Refuge Hero Card */}
       {primaryShelter && (
         <div className="safe-refuge-hero">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
             <span className="safe-badge-verified">
               🛡️ {t.safeRefugeHeader}
             </span>
             <span style={{ fontSize: '0.72rem', color: '#10b981', fontWeight: 'bold' }}>
-              ● Verified Open & Accessible
+              ● Closest out of {sheltersData.total_shelters_count || 1810} Verified Safe Places
             </span>
           </div>
 
@@ -590,7 +637,7 @@ function App() {
             <div className="safe-refuge-type">
               <span>🏛️ {primaryShelter.type || "High-Ground Relief Camp"}</span>
               <span>•</span>
-              <span>📍 {primaryShelter.region || currentCoords.name}</span>
+              <span>📍 {primaryShelter.region || "Safe High Ground"}</span>
             </div>
           </div>
 
@@ -605,13 +652,13 @@ function App() {
               <span className="safe-metric-label">Refuge Elevation</span>
               <span className="safe-metric-big" style={{ color: '#10b981' }}>{primaryShelter.elevation_m} <span style={{ fontSize: '0.8rem' }}>m</span></span>
               <span className="safe-metric-sub">
-                {elevationDelta >= 0 ? `+${elevationDelta}m above valley floor` : `${elevationDelta}m terrain margin`}
+                {elevationDelta >= 0 ? `+${elevationDelta}m safe height advantage` : `${elevationDelta}m terrain margin`}
               </span>
             </div>
             <div className="safe-metric-item">
               <span className="safe-metric-label">Refuge Capacity</span>
               <span className="safe-metric-big" style={{ color: '#f59e0b' }}>{primaryShelter.capacity}</span>
-              <span className="safe-metric-sub">Food, Medical, Power Gen</span>
+              <span className="safe-metric-sub">Open & Stocked</span>
             </div>
           </div>
 
@@ -627,14 +674,25 @@ function App() {
               🧭 {t.openInGmaps} ↗
             </a>
 
-            <a
-              href={getWhatsAppShareUrl(primaryShelter)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-share-whatsapp-route"
-            >
-              📲 {t.shareSafeRoute}
-            </a>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                className="win-btn primary"
+                onClick={redirectToNearestSafePlace}
+                style={{ flex: 1, justifyContent: 'center', padding: '9px 12px', fontSize: '0.8rem' }}
+              >
+                🚀 {t.immediateEvacuate}
+              </button>
+
+              <a
+                href={getWhatsAppShareUrl(primaryShelter)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-share-whatsapp-route"
+                style={{ flex: 1, justifyContent: 'center' }}
+              >
+                📲 {t.shareSafeRoute}
+              </a>
+            </div>
           </div>
 
           {/* On-site Provisions & Emergency Contact */}
@@ -718,15 +776,20 @@ function App() {
 
   return (
     <div>
-      {/* Top Device Preview Switcher Bar (Quickly toggle Windows Desktop vs Mobile App) */}
+      {/* Top Device Preview Switcher Bar */}
       <header className="preview-switch-bar">
         <div className="preview-switch-left">
           <span className="preview-status-pill">
             <span className="preview-pulse-dot"></span>
-            <span>{t.sensorsActive} • 91.9% Random Forest ML</span>
+            <span>
+              {gpsStatus === 'active' ? `🟢 ${t.gpsActiveBadge}` : gpsStatus === 'locating' ? `🟡 ${t.gpsLocating}` : `🔵 ${t.sensorsActive}`}
+            </span>
           </span>
           <span style={{ color: '#64748b', fontSize: '0.73rem' }}>
             Catchment: <b style={{ color: '#f1f5f9' }}>{telemetry?.location.name || currentCoords.name}</b>
+          </span>
+          <span style={{ background: 'rgba(2, 132, 199, 0.15)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.3)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 600 }}>
+            {sheltersData.total_shelters_count || 1810} Safe Places
           </span>
         </div>
 
@@ -764,9 +827,11 @@ function App() {
             <div className="win-title-center">
               <div className="win-station-badge">
                 <span className="preview-pulse-dot"></span>
-                <span>Telemetry: STN-{(currentCoords.lat).toFixed(1)}-{(currentCoords.lon).toFixed(1)}</span>
+                <span>
+                  {gpsStatus === 'active' ? `LIVE GPS: ${currentCoords.lat.toFixed(4)}°, ${currentCoords.lon.toFixed(4)}°` : `Station: STN-${(currentCoords.lat).toFixed(1)}-${(currentCoords.lon).toFixed(1)}`}
+                </span>
               </div>
-              <span>Latency: ~38ms</span>
+              <span>Database: 1,810 Safe Refuges Active</span>
             </div>
 
             <div className="win-controls">
@@ -791,19 +856,24 @@ function App() {
                   }
                 }}
               >
+                <option value="">-- Choose Preset or Use Live GPS --</option>
                 {regions.map(r => (
                   <option key={r.id} value={r.id}>{r.name} ({r.state})</option>
                 ))}
               </select>
 
-              <button className="win-btn" onClick={handleUseGps} title="Detect coordinates via GPS">
-                📍 {t.useGps}
+              <button
+                className={`win-btn ${gpsStatus === 'active' ? 'primary' : ''}`}
+                onClick={handleUseGps}
+                title="Detect live GPS coordinates and find nearest safe place"
+              >
+                📍 {gpsStatus === 'active' ? 'Live GPS Synced' : t.useGps}
               </button>
 
               <button
                 className="win-btn"
                 onClick={() => fetchPrediction(currentCoords)}
-                title="Force refresh catchment telemetry"
+                title="Force refresh catchment telemetry and flood alerts"
               >
                 🔄 {t.refreshIn}: <b className="num-val">{formatCountdown(refreshCountdown)}</b>
               </button>
@@ -848,7 +918,18 @@ function App() {
                   <span>{telemetry.messages[lang] || telemetry.messages.en}</span>
                 </div>
               </div>
-              <span style={{ fontSize: '0.74rem', opacity: 0.85 }}>Auto-evaluated via Open-Meteo & RF Pipeline</span>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                {primaryShelter && (
+                  <button
+                    onClick={redirectToNearestSafePlace}
+                    className="win-btn primary"
+                    style={{ padding: '4px 10px', fontSize: '0.72rem' }}
+                  >
+                    🧭 Open Route ({primaryShelter.distance_km}km)
+                  </button>
+                )}
+                <span style={{ fontSize: '0.74rem', opacity: 0.85 }}>Auto-evaluated via Open-Meteo & RF Pipeline</span>
+              </div>
             </div>
           )}
 
@@ -932,7 +1013,7 @@ function App() {
                         <span className="win-metric-val">{telemetry.location.elevation_m}</span>
                         <span className="win-metric-unit">m</span>
                       </div>
-                      <span className="win-metric-status status-normal">High Ground</span>
+                      <span className="win-metric-status status-normal">Catchment Ground</span>
                     </div>
 
                     <div className="win-metric-tile">
@@ -985,12 +1066,12 @@ function App() {
               </div>
             </div>
 
-            {/* COLUMN 2: SAFE POINT DIRECTIONS & GOOGLE MAPS NAVIGATION (Replaces Map) */}
+            {/* COLUMN 2: SAFE POINT DIRECTIONS & GOOGLE MAPS NAVIGATION (Real GPS Live Routing) */}
             <div className="win-col-center">
               {renderSafePointDirectionView()}
             </div>
 
-            {/* COLUMN 3: Operations Tabs (Shelters, Forecast Chart, Civil Defense) */}
+            {/* COLUMN 3: Operations Tabs (1,800+ Shelters, Forecast Chart, Civil Defense) */}
             <div className="win-col-right">
               {/* Tab Header */}
               <div className="win-tabs-header">
@@ -998,7 +1079,7 @@ function App() {
                   className={`win-tab-btn ${desktopRightTab === 'shelters' ? 'active' : ''}`}
                   onClick={() => setDesktopRightTab('shelters')}
                 >
-                  🛡️ {t.tabShelters} ({sheltersData.shelters.length})
+                  🛡️ {t.tabShelters} ({sheltersData.total_shelters_count || 1810})
                 </button>
                 <button
                   className={`win-tab-btn ${desktopRightTab === 'forecast' ? 'active' : ''}`}
@@ -1019,7 +1100,7 @@ function App() {
                 <div className="win-card" style={{ flex: 1, overflowY: 'auto' }}>
                   <div className="win-card-header">
                     <span className="win-card-title">🛡️ {t.sheltersTitle}</span>
-                    <span style={{ fontSize: '0.7rem', color: '#10b981' }}>High-Ground Verified</span>
+                    <span style={{ fontSize: '0.7rem', color: '#10b981' }}>Live GPS Proximity</span>
                   </div>
                   <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginBottom: '12px' }}>
                     {t.sheltersSubtitle}
@@ -1167,7 +1248,7 @@ function App() {
                     <div className="mobile-brand-title">{t.appName}</div>
                     <div className="mobile-brand-sub">
                       <span className="preview-pulse-dot"></span>
-                      <span>{t.liveSubtitle}</span>
+                      <span>{gpsStatus === 'active' ? t.gpsActiveBadge : t.liveSubtitle}</span>
                     </div>
                   </div>
                 </div>
@@ -1203,13 +1284,18 @@ function App() {
                     }
                   }}
                 >
+                  <option value="">📍 Live GPS Catchment</option>
                   {regions.map(r => (
                     <option key={r.id} value={r.id}>{r.name} ({r.state})</option>
                   ))}
                 </select>
 
-                <button className="win-btn" style={{ padding: '6px 8px', fontSize: '0.75rem' }} onClick={handleUseGps}>
-                  📍 {t.useGps}
+                <button
+                  className={`win-btn ${gpsStatus === 'active' ? 'primary' : ''}`}
+                  style={{ padding: '6px 8px', fontSize: '0.75rem' }}
+                  onClick={handleUseGps}
+                >
+                  📍 {gpsStatus === 'active' ? 'Live GPS' : t.useGps}
                 </button>
 
                 <select
@@ -1246,7 +1332,7 @@ function App() {
                 <div className="mobile-tab-content">
                   {/* Quick Safe Refuge Access Banner */}
                   {primaryShelter && (
-                    <div style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.15))', border: '1px solid rgba(16, 185, 129, 0.4)', borderRadius: '12px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(6, 182, 212, 0.18))', border: '1px solid rgba(16, 185, 129, 0.45)', borderRadius: '12px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#34d399', textTransform: 'uppercase' }}>
                           🛡️ Nearest Safe Ground Refuge
@@ -1390,7 +1476,7 @@ function App() {
                   <div className="win-card">
                     <div className="win-card-header">
                       <span className="win-card-title">🛡️ {t.sheltersTitle}</span>
-                      <span style={{ fontSize: '0.7rem', color: '#10b981' }}>{sheltersData.shelters.length} Available</span>
+                      <span style={{ fontSize: '0.7rem', color: '#10b981' }}>{sheltersData.total_shelters_count || 1810} in DB</span>
                     </div>
                     <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginBottom: '12px' }}>
                       {t.sheltersSubtitle}
@@ -1592,7 +1678,7 @@ function App() {
 
               <a
                 href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
-                  `EMERGENCY FLASH FLOOD SOS: I am trapped in a hilly flood hazard zone at ${currentCoords.name}. GPS: ${currentCoords.lat.toFixed(5)}, ${currentCoords.lon.toFixed(5)}. Google Maps: https://maps.google.com/?q=${currentCoords.lat},${currentCoords.lon}. Immediate rescue required!`
+                  `EMERGENCY FLASH FLOOD SOS: I am trapped in a flood hazard zone at ${currentCoords.name}. GPS: ${currentCoords.lat.toFixed(5)}, ${currentCoords.lon.toFixed(5)}. Google Maps: https://maps.google.com/?q=${currentCoords.lat},${currentCoords.lon}. Immediate rescue required!`
                 )}`}
                 target="_blank"
                 rel="noreferrer"

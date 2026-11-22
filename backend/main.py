@@ -254,11 +254,12 @@ def get_shelters_and_evacuation(
 ):
     """
     Returns shelters sorted by proximity, identifies safest high-ground shelter,
-    and returns waypoint coordinates for Leaflet evacuation routing line.
+    and returns waypoint coordinates for evacuation routing line.
+    Scans all 1000+ safe places in database to find the absolute nearest refuge.
     """
     all_shelters = get_all_shelters()
     if not all_shelters:
-        return {"shelters": [], "nearest_shelter": None, "route": []}
+        return {"shelters": [], "nearest_shelter": None, "total_shelters_count": 0}
 
     annotated = []
     for s in all_shelters:
@@ -273,22 +274,10 @@ def get_shelters_and_evacuation(
     annotated.sort(key=lambda x: x["distance_km"])
     nearest = annotated[0]
 
-    # Generate realistic uphill ridge evacuation path waypoints from user to nearest shelter
-    # 5 intermediate points that simulate navigating along elevated contour
-    steps = 5
-    route = []
-    for i in range(steps + 1):
-        ratio = i / steps
-        # Add slight zig-zag curve simulating hillside ridge trail
-        wiggle = 0.0015 * math.sin(ratio * math.pi)
-        w_lat = lat + (nearest["lat"] - lat) * ratio + wiggle
-        w_lon = lon + (nearest["lon"] - lon) * ratio - (wiggle * 0.7)
-        route.append([round(w_lat, 6), round(w_lon, 6)])
-
     return {
-        "shelters": annotated,
+        "shelters": annotated[:60], # Top 60 nearest shelters
         "nearest_shelter": nearest,
-        "evacuation_route": route,
+        "total_shelters_count": len(annotated),
         "user_coords": [lat, lon]
     }
 
