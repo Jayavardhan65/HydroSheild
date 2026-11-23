@@ -392,3 +392,25 @@ def serve_home():
     if os.path.exists(index_file):
         return FileResponse(index_file)
     return {"message": "Flash Flood Prediction System API online. Frontend files pending."}
+
+@app.get("/sw.js")
+def serve_sw():
+    sw_file = os.path.join(FRONTEND_DIR, "sw.js")
+    if os.path.exists(sw_file):
+        return FileResponse(sw_file, media_type="application/javascript", headers={"Service-Worker-Allowed": "/"})
+    return JSONResponse(status_code=404, content={"error": "Not found"})
+
+@app.get("/manifest.json")
+def serve_manifest():
+    mf_file = os.path.join(FRONTEND_DIR, "manifest.json")
+    if os.path.exists(mf_file):
+        return FileResponse(mf_file, media_type="application/manifest+json")
+    return JSONResponse(status_code=404, content={"error": "Not found"})
+
+@app.get("/app-icon.png")
+@app.get("/favicon.ico")
+def serve_icon():
+    icon_file = os.path.join(FRONTEND_DIR, "app-icon.png")
+    if os.path.exists(icon_file):
+        return FileResponse(icon_file, media_type="image/png")
+    return JSONResponse(status_code=404, content={"error": "Not found"})
